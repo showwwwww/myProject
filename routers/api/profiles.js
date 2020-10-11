@@ -20,11 +20,11 @@ router.post('/add',passport.authenticate("jwt",{session:false}),(req,res)=>{
     const profileFields={}
 
     if(req.body.type) profileFields.type=req.body.type;
-    if(req.body.describe) profileFields.type=req.body.describe;
-    if(req.body.income) profileFields.type=req.body.income;
-    if(req.body.expend) profileFields.type=req.body.expend;
-    if(req.body.cash) profileFields.type=req.body.cash;
-    if(req.body.remark) profileFields.type=req.body.remark;
+    if(req.body.describe) profileFields.describe=req.body.describe;
+    if(req.body.income) profileFields.income=req.body.income;
+    if(req.body.expend) profileFields.expend=req.body.expend;
+    if(req.body.cash) profileFields.cash=req.body.cash;
+    if(req.body.remark) profileFields.remark=req.body.remark;
 
     new Profile(profileFields).save().then(profile=>{
         res.json(profile);
@@ -42,7 +42,7 @@ router.get('/',passport.authenticate("jwt",{session:false}),(req,res)=>{
         }
         res.json(profile);
     })
-    .catch(err=>res.status(404),json(err));
+    .catch(err=>res.status(404).json(err));
 });
 
 //$router   Get api/profiles/:id
@@ -59,18 +59,18 @@ router.get('/:id',passport.authenticate("jwt",{session:false}),(req,res)=>{
     .catch(err=>res.status(404),json(err));
 });
 
-//$router   Post api/profiles/edit:id
+//$router   Post api/profiles/edit/:id
 //@desc     edit info interface
 //@access   Private
-router.post('/edit:id',passport.authenticate("jwt",{session:false}),(req,res)=>{
+router.post('/edit/:id',passport.authenticate("jwt",{session:false}),(req,res)=>{
     const profileFields={}
 
     if(req.body.type) profileFields.type=req.body.type;
-    if(req.body.describe) profileFields.type=req.body.describe;
-    if(req.body.income) profileFields.type=req.body.income;
-    if(req.body.expend) profileFields.type=req.body.expend;
-    if(req.body.cash) profileFields.type=req.body.cash;
-    if(req.body.remark) profileFields.type=req.body.remark;
+    if(req.body.describe) profileFields.describe=req.body.describe;
+    if(req.body.income) profileFields.income=req.body.income;
+    if(req.body.expend) profileFields.expend=req.body.expend;
+    if(req.body.cash) profileFields.cash=req.body.cash;
+    if(req.body.remark) profileFields.remark=req.body.remark;
 
     Profile.findOneAndUpdate(
         {_id:req.params.id},
@@ -79,15 +79,19 @@ router.post('/edit:id',passport.authenticate("jwt",{session:false}),(req,res)=>{
     ).then(profile=>res.json(profile));
 });
 
-//$router   Post api/profiles/delete:id
+//$router   Post api/profiles/delete/:id
 //@desc     remove info interface
 //@access   Private
-router.delete('/delete:id',passport.authenticate("jwt",{session:false}),(req,res)=>{
-  Profile.findOneAndRemove({_id:req.params.id}).then(profile=>{
-      profile.save().then(profile=>res.json(profile));
-  })
-  .catch(err=>res.status(404).json(err));
-});
+router.delete('/delete/:id',
+passport.authenticate('jwt',{session:false}),
+(req,res)=>{
+  Profile.findOneAndRemove({_id : req.params.id})
+ .then(profile => {
+       profile.save().then(profile => res.json(profile));
+   })
+  .catch(err=>res.status(404).json('删除失败！'));
+ }
+); 
 
 
 module.exports=router;

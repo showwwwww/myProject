@@ -1,7 +1,6 @@
 const express=require('express');
 const mongoose=require('mongoose');
 const bodyParser=require('body-parser');
-const fs=require('fs');
 const passport=require('passport');
 
 
@@ -23,11 +22,6 @@ mongoose.connect(db)
     .then(()=>{console.log("MongoDB connected")})
     .catch(err=>console.log(err));
 
-app.get("/",(req,res)=>{
-    fs.readFile('index.html','utf8',(err,data)=>{
-        res.send(data);
-    });
-});
 
 //initialize passport
 app.use(passport.initialize());
